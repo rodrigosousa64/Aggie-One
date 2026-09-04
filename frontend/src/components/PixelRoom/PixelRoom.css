@@ -1,0 +1,110 @@
+/* =========================================================
+   CAT ROOM - Sala Preta Minimalista (Apenas Tapete Quadrado)
+   100% CSS, zero imagens. Mobile-First.
+   ========================================================= */
+
+.cat-room {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+}
+
+/* ---- ILUMINAÇÃO AMBIENTE ---- */
+.ambient-light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 235, 200, 0.05) 0%,
+    rgba(255, 235, 200, 0.02) 40%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- TAPETE QUADRADO CENTRAL ---- */
+.square-rug {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 55%;
+  height: 55%;
+  min-width: 200px;
+  min-height: 200px;
+  background: linear-gradient(
+    135deg,
+    #3d2020 0%,
+    #2d1515 50%,
+    #1e0e0e 100%
+  );
+  border-radius: 8px; /* Cantos levemente arredondados */
+  z-index: 2;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.5),
+    0 4px 20px rgba(0,0,0,0.4);
+}
+
+.rug-pattern {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 2px dashed rgba(160, 100, 60, 0.2);
+  border-radius: 4px;
+}
+
+/* ---- CHÃO (textura sutil) ---- */
+.cat-room::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(30,20,15,0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(25,18,12,0.2) 0%, transparent 40%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Leve reflexo no chão (como piso encerado) */
+.cat-room::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    170deg,
+    transparent 0%,
+    transparent 45%,
+    rgba(255,255,255,0.01) 50%,
+    transparent 55%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ---- AREA DO PET ---- */
+.pet-area {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 6px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

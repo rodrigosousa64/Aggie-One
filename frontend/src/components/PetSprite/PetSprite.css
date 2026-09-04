@@ -1,0 +1,32 @@
+.pet-canvas-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pet-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* Optional pixelated rendering */
+  image-rendering: pixelated;
+}
+
+/* Indicators */
+.mood-indicator {
+  position: absolute;
+  font-size: 1.5rem;
+  top: -20px;
+  right: -10px;
+  z-index: 10;
+  animation: float-indicator 2s infinite ease-in-out;
+  text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
+}
+
+@keyframes float-indicator {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
