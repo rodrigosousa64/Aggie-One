@@ -142,15 +142,17 @@ function App() {
       {isUnlocked && (
         <div className="app-container">
           {isManualOpen && <AggieManual onClose={() => setIsManualOpen(false)} />}
-          <DevMenu 
-        setAction={setAction}
-        setDirection={setDirection}
-        setPetState={setPetState}
-        triggerSequence={triggerSequence}
-        equipAccessory={equipAccessory}
-        getPetTalk={getPetTalk}
-        showChat={showChat}
-      />
+          {stats.is_admin && (
+            <DevMenu 
+              setAction={setAction}
+              setDirection={setDirection}
+              setPetState={setPetState}
+              triggerSequence={triggerSequence}
+              equipAccessory={equipAccessory}
+              getPetTalk={getPetTalk}
+              showChat={showChat}
+            />
+          )}
       <StatusHUD stats={stats} />
       <PlayerActions 
         onFeed={handleFeed}

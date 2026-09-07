@@ -15,6 +15,7 @@ class PetStateSchema(Schema):
     anger: int
     back_pain_level: int
     active_accessory: str | None = None
+    is_admin: bool = False
 
 class InteractionSchema(Schema):
     message: str
@@ -35,6 +36,7 @@ class ResponseSchema(Schema):
 @router.get("/state", response=PetStateSchema)
 def get_state(request):
     state, created = PetState.objects.get_or_create(id=1)
+    state.is_admin = request.user.is_authenticated and request.user.is_staff
     return state
 
 class PetStatePatchSchema(Schema):
@@ -51,6 +53,7 @@ def update_state(request, payload: PetStatePatchSchema):
     for field, value in payload.dict().items():
         setattr(state, field, value)
     state.save()
+    state.is_admin = request.user.is_authenticated and request.user.is_staff
     return state
 
 @router.get("/talk", response=ResponseSchema)
