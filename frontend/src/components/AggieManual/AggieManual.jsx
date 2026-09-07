@@ -11,26 +11,28 @@ export default function AggieManual({ onClose }) {
           
           <div className="manual-section">
             <h2>👗 Comandos de Roupas</h2>
-            <p>Envie no chat para equipar:</p>
+            <p>Envie no chat para equipar (use exatamente assim):</p>
             <ul>
-              <li><span className="cmd">quero chapéu</span> Chapéu de Festa Colorido</li>
-              <li><span className="cmd">gravata</span> Gravata Borboleta Preta</li>
-              <li><span className="cmd">colar</span> Colar Dourado</li>
-              <li><span className="cmd">óculos</span> Óculos de Sol Redondos</li>
-              <li><span className="cmd">cachecol</span> Cachecol Azul</li>
-              <li><span className="cmd">sem roupa</span> Remove todos acessórios</li>
+              <li><span className="cmd">coloca o chapeu de festa</span> Chapéu Colorido</li>
+              <li><span className="cmd">coloca uma gravata elegante</span> Gravata Preta</li>
+              <li><span className="cmd">coloca o seu colar</span> Colar Dourado</li>
+              <li><span className="cmd">coloca o oculos de sol</span> Óculos Redondos</li>
+              <li><span className="cmd">coloca o seu cachecol</span> Cachecol Azul</li>
+              <li><span className="cmd">fica sem roupa nenhuma</span> Remove tudo</li>
             </ul>
           </div>
 
           <div className="manual-section">
-            <h2>⭐ Comandos Especiais</h2>
+            <h2>⭐ Comandos Especiais e História</h2>
             <p>Descubra segredos no chat:</p>
             <ul>
-              <li><span className="cmd">aniversário</span> Festa com balões e bolo</li>
-              <li><span className="cmd">matrix</span> Chuva de código hacker</li>
-              <li><span className="cmd">detetive</span> Coloca chapéu Fedora Noir</li>
-              <li><span className="cmd">!</span> Dá um baita susto na gata!</li>
-              <li><span className="cmd">comida</span> Alimenta a gata diretamente</li>
+              <li><span className="cmd">vamos fazer uma festa</span> Festa com balões</li>
+              <li><span className="cmd">quero entrar na matrix</span> Chuva de código hacker</li>
+              <li><span className="cmd">bancar o detetive agora</span> Chapéu Fedora Noir</li>
+              <li><span className="cmd">dar um susto nela</span> Dá um baita susto!</li>
+              <li><span className="cmd">vem comer um sache</span> Alimenta a gata</li>
+              <li><span className="cmd">quem foi que te criou</span> Descubra a origem dela</li>
+              <li><span className="cmd">fala da sua dona</span> Lore sobre a Agatha</li>
             </ul>
           </div>
           
