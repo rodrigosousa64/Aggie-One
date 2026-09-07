@@ -20,9 +20,13 @@ export const handleKeywordEvents = (message, callbacks) => {
     // Verifica se a mensagem contém alguma das palavras-chave
     if (keywords.some(k => lowerMsg.includes(k))) {
       
-      // Se houver uma frase cadastrada no banco, faz a gata falar na hora
+      // Se houver frases cadastradas no banco, faz a gata falar na hora
       if (cmd.reply_text) {
-        callbacks.showChat(cmd.reply_text, true);
+        const phrases = cmd.reply_text.split('|').map(p => p.trim()).filter(Boolean);
+        if (phrases.length > 0) {
+          const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+          callbacks.showChat(randomPhrase, true);
+        }
       }
       
       // Roteador de Eventos Frontend

@@ -97,7 +97,7 @@ class ChatCommand(models.Model):
     name = models.CharField(max_length=50, unique=True, help_text="Nome do evento (ex: Evento Matrix)")
     keywords = models.CharField(max_length=255, help_text="Palavras-chave separadas por vírgula (ex: matrix,hack,frio)")
     event_type = models.CharField(max_length=50, choices=EVENT_CHOICES, help_text="Tipo de evento a disparar")
-    reply_text = models.CharField(max_length=255, blank=True, help_text="Frase opcional para a gata falar quando disparar")
+    reply_text = models.TextField(blank=True, help_text="Frase opcional. Para múltiplas variações, separe-as por |")
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
