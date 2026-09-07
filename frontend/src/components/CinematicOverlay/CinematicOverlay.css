@@ -26,6 +26,14 @@
   gap: 1rem;
 }
 
+.cinematic-sprite-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -1rem; /* Aproxima a gata da caixa de texto */
+  z-index: 9999;
+}
+
 .cinematic-text-box {
   background: #111;
   border: 4px solid #333;

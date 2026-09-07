@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PetSprite from '../PetSprite/PetSprite';
 import './CinematicOverlay.css';
 
 export default function CinematicOverlay({ onComplete, petContext }) {
@@ -7,6 +8,8 @@ export default function CinematicOverlay({ onComplete, petContext }) {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [isFading, setIsFading] = useState(false);
+  const [localAction, setLocalAction] = useState('IDLE');
+  const [localDirection, setLocalDirection] = useState('UP');
 
   const lines = [
     "...",
@@ -36,20 +39,28 @@ export default function CinematicOverlay({ onComplete, petContext }) {
 
   // Coordenação de Animações
   useEffect(() => {
+    let newAction = 'IDLE';
+    let newDirection = 'DOWN';
+
     if (currentLineIndex === 0) {
-      setAction('IDLE');
-      setDirection('UP'); // Olhando para trás/tela (depende do referencial, DOWN é para o usuário)
+      newAction = 'IDLE';
+      newDirection = 'UP'; // Olhando para trás/tela (depende do referencial, DOWN é para o usuário)
     } else if (currentLineIndex === 1) {
-      setDirection('DOWN'); // Olha para o usuário
+      newDirection = 'DOWN'; // Olha para o usuário
     } else if (currentLineIndex === 2) {
-      setAction('JUMP');
+      newAction = 'JUMP';
     } else if (currentLineIndex === 3) {
-      setAction('SIT');
+      newAction = 'SIT';
     } else if (currentLineIndex === 4) {
-      setAction('WALK');
+      newAction = 'WALK';
     } else if (currentLineIndex === 5) {
-      setAction('DANCE');
+      newAction = 'DANCE';
     }
+
+    setAction(newAction);
+    setDirection(newDirection);
+    setLocalAction(newAction);
+    setLocalDirection(newDirection);
   }, [currentLineIndex, setAction, setDirection]);
 
   const handleNext = () => {
@@ -81,6 +92,14 @@ export default function CinematicOverlay({ onComplete, petContext }) {
   return (
     <div className={`cinematic-overlay ${isFading ? 'fade-out' : ''}`}>
       <div className="cinematic-content">
+        <div className="cinematic-sprite-container">
+          <PetSprite 
+            action={localAction} 
+            direction={localDirection} 
+            mood="neutra" 
+            accessory="NONE" 
+          />
+        </div>
         <div className="cinematic-text-box">
           <p className="cinematic-text">{displayedText}</p>
           {!isTyping && currentLineIndex < lines.length - 1 && (
