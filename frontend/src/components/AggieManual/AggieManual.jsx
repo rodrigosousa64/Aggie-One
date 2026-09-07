@@ -33,6 +33,13 @@ export default function AggieManual({ onClose }) {
               <li><span className="cmd">vem comer um sache</span> Alimenta a gata</li>
               <li><span className="cmd">quem foi que te criou</span> Descubra a origem dela</li>
               <li><span className="cmd">fala da sua dona</span> Lore sobre a Agatha</li>
+              <li><span className="cmd">faz risoto pra mim</span> Lore do Risoto</li>
+              <li><span className="cmd">estudar direito agora</span> Lore de Direito / Vade Mecum</li>
+              <li><span className="cmd">bolo de cenoura com chocolate</span> Lore sobre Doces</li>
+              <li><span className="cmd">acorda agatha dorminhoca</span> Lore sobre Sono/Coluna</li>
+              <li><span className="cmd">assistir la casa de papel</span> Lore de Séries e Filmes</li>
+              <li><span className="cmd">toca tim bernardes</span> Lore de Música / Cantoria</li>
+              <li><span className="cmd">voce me ama agatha</span> Mensagem Especial de Amor</li>
             </ul>
           </div>
           

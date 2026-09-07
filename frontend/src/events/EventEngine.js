@@ -37,6 +37,20 @@ export const handleKeywordEvents = (message, callbacks) => {
           return triggerLore(callbacks, 'CREATOR');
         case 'LORE_AGATHA':
           return triggerLore(callbacks, 'AGATHA');
+        case 'LORE_RISOTO':
+          return triggerLore(callbacks, 'RISOTO');
+        case 'LORE_DIREITO':
+          return triggerLore(callbacks, 'DIREITO');
+        case 'LORE_BOLO':
+          return triggerLore(callbacks, 'BOLO');
+        case 'LORE_SONO':
+          return triggerLore(callbacks, 'SONO');
+        case 'LORE_SERIES':
+          return triggerLore(callbacks, 'SERIES');
+        case 'LORE_MUSICA':
+          return triggerLore(callbacks, 'MUSICA');
+        case 'LORE_AMOR':
+          return triggerLore(callbacks, 'AMOR');
         case 'MATRIX':
           return triggerMatrix(callbacks);
         case 'DETECTIVE':
