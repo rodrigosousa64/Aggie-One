@@ -28,5 +28,5 @@ api.add_router("/brain/", brain_router)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', api.urls),
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
+    re_path(r'^(?!admin|api).*$', TemplateView.as_view(template_name='index.html')),
 ]
