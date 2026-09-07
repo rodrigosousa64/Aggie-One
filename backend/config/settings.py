@@ -28,6 +28,7 @@ SECRET_KEY = 'django-insecure-hxbg090recze#oqq9z@(hhwvbqf%)kq)18j+w(no#(78r)uq9g
 DEBUG = True
 
 ALLOWED_HOSTS = ['*'] # Permite qualquer host no deploy
+CSRF_TRUSTED_ORIGINS = ['https://aggie-one.up.railway.app']
 
 
 # Application definition
