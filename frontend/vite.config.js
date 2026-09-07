@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/static/',
   plugins: [react()],
   server: {
     host: true, // Exposes to local network (0.0.0.0)
