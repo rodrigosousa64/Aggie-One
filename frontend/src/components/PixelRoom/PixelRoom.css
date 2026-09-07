@@ -7,7 +7,11 @@
   width: 100%;
   height: 100%;
   position: relative;
-  background: #0a0a0a;
+  background-color: #0f0a14; /* Tom base escuro */
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.5) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.5) 2px, transparent 2px);
+  background-size: 32px 32px; /* Piso em grid/azulejo retro */
   overflow: hidden;
 }
 
@@ -18,14 +22,27 @@
   left: 0;
   right: 0;
   height: 100%;
+  /* Vinheta pesada (tudo em volta é breu) */
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 235, 200, 0.05) 0%,
-    rgba(255, 235, 200, 0.02) 40%,
-    transparent 80%
+    transparent 10%,
+    rgba(10, 10, 10, 0.8) 60%,
+    #0a0a0a 100%
   );
   pointer-events: none;
-  z-index: 1;
+  z-index: 5; /* Acima de tudo, exceto UI */
+  transition: background 1s ease-in-out;
+}
+
+.cat-room.light-on .ambient-light {
+  /* Quando de dia, a vinheta recua e a sala fica mais visível */
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(147, 51, 234, 0.1) 0%, /* Brilho neon leve */
+    transparent 40%,
+    rgba(10, 10, 10, 0.6) 80%,
+    #0a0a0a 100%
+  );
 }
 
 /* ---- TAPETE QUADRADO CENTRAL ---- */
@@ -34,67 +51,28 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 55%;
-  height: 55%;
-  min-width: 200px;
-  min-height: 200px;
-  background: linear-gradient(
-    135deg,
-    #3d2020 0%,
-    #2d1515 50%,
-    #1e0e0e 100%
-  );
-  border-radius: 8px; /* Cantos levemente arredondados */
+  width: 240px;
+  height: 240px;
+  background: #140b2e; /* Roxo ultra escuro */
+  border: 4px solid #4c1d95; /* Borda neon pixelada */
+  border-radius: 0px; /* Estilo 8-bit */
   z-index: 2;
-  box-shadow:
-    inset 0 0 20px rgba(0,0,0,0.5),
-    0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: 
+    inset 0 0 0 4px #2e1065, /* Segunda borda interna */
+    0 4px 30px rgba(76, 29, 149, 0.3); /* Brilho neon no chão */
 }
 
 .rug-pattern {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  border: 2px dashed rgba(160, 100, 60, 0.2);
-  border-radius: 4px;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  border: 2px dashed rgba(139, 92, 246, 0.3);
 }
 
 /* ---- CHÃO (textura sutil) ---- */
-.cat-room::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(30,20,15,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 30%, rgba(25,18,12,0.2) 0%, transparent 40%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Leve reflexo no chão (como piso encerado) */
-.cat-room::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    170deg,
-    transparent 0%,
-    transparent 45%,
-    rgba(255,255,255,0.01) 50%,
-    transparent 55%,
-    transparent 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
+/* Removido o reflexo branco pois é um quarto dark */
 
 /* ---- AREA DO PET ---- */
 .pet-area {
@@ -107,4 +85,75 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* ---- GAMING SETUP ---- */
+.gaming-setup {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 80px;
+  height: 80px;
+  z-index: 1; /* Abaixo da iluminação ambiente e do pet */
+}
+
+.desk {
+  position: absolute;
+  bottom: 0;
+  width: 80px;
+  height: 24px;
+  background: #2a1b38;
+  border-top: 4px solid #1a0b2e;
+  border-radius: 2px;
+}
+
+.monitor {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  width: 40px;
+  height: 28px;
+  background: #0f172a;
+  border: 4px solid #334155;
+  border-radius: 0px;
+  animation: glowFlicker 3s infinite alternate;
+}
+
+.monitor::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background-color: #064e3b; /* Fundo escuro pro código */
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(34, 197, 94, 0.8) 3px,
+    rgba(34, 197, 94, 0.8) 4px
+  );
+  background-size: 100% 10px;
+  animation: scrollMatrix 1.5s linear infinite, flicker 3s infinite;
+  opacity: 0.6;
+}
+
+@keyframes glowFlicker {
+  0% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.7); }
+  100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.4); }
+}
+
+@keyframes scrollMatrix {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 10px; }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.6; }
+  5% { opacity: 0.8; }
+  10% { opacity: 0.6; }
+  50% { opacity: 0.7; }
+  100% { opacity: 0.6; }
 }

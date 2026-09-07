@@ -31,6 +31,11 @@ export const SPEEDS = {
   TIRED: 12,
   GROOM: 12,
   STARTLE_JUMP: 3, 
-  EAT_TREAT: 8,
+  EAT_TREAT: 4,
+  YAWN: 15, // Bocejo é bem lento (frames longos)
+  SCRATCH: 3, // Coçar é bem rápido (perna batendo)
+  DANCE: 6, // Dança básica com ritmo moderado
+  DANCE_SPIN: 4, // Giro rápido
+  DANCE_WIGGLE: 2, // Wiggle frenético (muito rápido)
   DEFAULT: 8,
 };

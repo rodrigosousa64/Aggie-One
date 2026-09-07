@@ -4,6 +4,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
 .pet-wrapper {
@@ -11,6 +16,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.pet-wrapper.dragging {
+  cursor: grabbing;
+  z-index: 999;
+  transform: scale(1.1) !important; /* Parece estar mais próxima da câmera/no alto */
+  filter: drop-shadow(0 30px 15px rgba(0,0,0,0.4)); /* Sombra distante */
 }
 
 .pixel-chat-bubble {
@@ -23,9 +36,9 @@
   padding: 10px 15px;
   border-radius: 10px;
   border: 4px solid black;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  font-size: 16px;
+  font-family: 'Press Start 2P', 'Courier New', Courier, monospace;
+  font-size: 10px;
+  line-height: 1.5;
   z-index: 100;
   text-align: center;
   max-width: 80%;
@@ -56,7 +69,45 @@
   border-color: white transparent transparent transparent;
   display: block;
   width: 0;
-  z-index: 1;
+  z-index: 5;
+}
+
+/* Emotion Bubble */
+.emotion-bubble-container {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: float-bubble 2s ease-in-out infinite;
+}
+
+.emotion-bubble {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: pop-in 0.3s cubic-bezier(0.17, 0.67, 0.23, 1.25);
+}
+
+@keyframes float-bubble {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .interaction-hitbox {
@@ -68,6 +119,7 @@
   transform: translate(-50%, -50%);
   z-index: 15;
   cursor: pointer;
+  touch-action: none;
 }
 
 /* =========================================
@@ -121,4 +173,62 @@
 @keyframes dropIn {
   0% { transform: translate(-50%, -150%); opacity: 0; }
   100% { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+/* Efeito de Hover: Corações Flutuantes */
+.floating-hearts {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.heart-particle {
+  position: absolute;
+  font-size: 1.2rem;
+  bottom: 0;
+  opacity: 0;
+  animation: floatHeart 1.5s ease-out forwards;
+}
+
+@keyframes floatHeart {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-40px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* Efeito Matrix */
+.matrix-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: rgba(0, 20, 0, 0.4);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.matrix-code {
+  position: absolute;
+  color: #0f0;
+  font-family: monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 5px #0f0;
+  animation: matrixFall 2s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes matrixFall {
+  0% { transform: translateY(-100%); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
 }

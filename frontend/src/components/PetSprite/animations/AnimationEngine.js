@@ -9,6 +9,11 @@ import { SitGroom } from './actions/SitGroom';
 import { SitLoaf } from './actions/SitLoaf';
 import { EatTreat } from './actions/EatTreat';
 import { Startle } from './sequences/Startle';
+import { Dance } from './actions/Dance';
+import { DanceSpin } from './actions/DanceSpin';
+import { DanceWiggle } from './actions/DanceWiggle';
+
+import { Yawn, Scratch } from './actions/YawnScratch';
 
 const actionMap = {
   SLEEPING: WakingUp,
@@ -27,7 +32,12 @@ const actionMap = {
   SIT: SitGroom,
   SIT_LOAF: SitLoaf,
   GROOM: SitGroom,
-  EAT_TREAT: EatTreat
+  EAT_TREAT: EatTreat,
+  YAWN: Yawn,
+  SCRATCH: Scratch,
+  DANCE: Dance,
+  DANCE_SPIN: DanceSpin,
+  DANCE_WIGGLE: DanceWiggle
 };
 
 export const AnimationEngine = {

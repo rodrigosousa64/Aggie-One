@@ -29,6 +29,7 @@ Criar um **pet virtual inteligente** que:
 | 😴 Dorme tarde / de tarde | Hábitos noturnos |
 | 🦴 Dor na coluna | Reclama com frequência |
 | 🧠 Péssima memória | Esquece coisas (feature, não bug) |
+| 🎵 Ama música | Gosta de Anavitória, Tim Bernardes e Cazuza |
 
 ---
 
@@ -38,6 +39,10 @@ Criar um **pet virtual inteligente** que:
 Aggie-One/
 ├── backend/                  # Django + Django Ninja (API REST)
 │   ├── config/               # Settings, URLs
+│   ├── brain/                # Cérebro dinâmico (configurações de IA)
+│   │   ├── models.py         # ActionProbability, AggiePhrase, BrainSetting, ChatCommand
+│   │   ├── api.py            # Endpoints: /config
+│   │   └── admin.py          # Painel de controle do cérebro
 │   └── pet_core/             # App principal
 │       ├── models.py         # PetState, PersonaTrait, ScriptedPhrase, MemoryContext
 │       ├── api.py            # Endpoints: /state, /talk, /interact
@@ -47,11 +52,39 @@ Aggie-One/
 │   └── src/
 │       ├── components/
 │       │   ├── PetSprite/    # Gatinha desenhada via Canvas 2D (procedural pixel art)
+│       │   │   ├── animations/ # Sistema modular de animações
+│       │   │   │   ├── AnimationEngine.js
+│       │   │   │   ├── actions/ # Animações simples (Dance, Jump, etc)
+│       │   │   │   └── sequences/ # Sequências complexas (Hunting, Zoomies)
+│       │   │   ├── renderCat.js # Renderizador principal
+│       │   │   ├── directions.js # Desenho por direção
+│       │   │   └── constants.js # Cores, tamanhos, velocidades
 │       │   ├── PixelRoom/    # Cenário base feito 100% com CSS
 │       │   ├── ChatBubble/   # Balão de fala com efeito typewriter
-│       │   └── MobileUIOverlay/ # Barra de interação (input + enviar)
-│       └── App.jsx           # Container principal com lógica de movimentação
+│       │   ├── AudioManager/ # Sistema de música e dança
+│       │   ├── MobileUIOverlay/ # Barra de interação (input + enviar)
+│       │   ├── StatusHUD/    # HUD de status Tamagotchi
+│       │   └── PlayerActions/ # Botões de ação (alimentar, música)
+│       ├── events/            # Sistema de eventos frontend
+│       │   ├── EventEngine.js # Motor de eventos
+│       │   ├── ClothingEvent.js # Eventos de roupas
+│       │   ├── BirthdayEvent.js # Evento de aniversário
+│       │   └── MatrixEvent.js # Evento Matrix
+│       ├── hooks/             # Custom Hooks React
+│       │   ├── usePetState.js # Gerenciamento de estado
+│       │   ├── useGameLoop.js # Loop de jogo e dreno de stats
+│       │   ├── useWanderAI.js # IA de comportamento autônomo
+│       │   ├── useDanceManager.js # Gerenciador de danças
+│       │   ├── useChatAndEvents.js # Sistema de chat e eventos
+│       │   └── useSequenceEngine.js # Motor de sequências
+│       └── services/          # Comunicação com backend
+│           ├── petService.js # Serviços do pet
+│           └── brainService.js # Serviços do cérebro
 │
+├── AGGIE_CONTEXT.md          # Contexto completo do projeto
+├── AGGIE_MANUAL.md           # Manual do usuário
+├── PET_SPRITE_ARCHITECTURE.md # Arquitetura do sprite
+├── EVENTS_ARCHITECTURE.md     # Arquitetura de eventos
 └── README.md
 ```
 
@@ -62,6 +95,7 @@ Aggie-One/
 | `GET` | `/api/pet/state` | Retorna o estado atual (humor, energia, dor na coluna) |
 | `GET` | `/api/pet/talk` | Retorna uma fala aleatória (do banco ou da IA) |
 | `POST` | `/api/pet/interact` | Recebe mensagem do usuário e retorna resposta da IA |
+| `GET` | `/api/brain/config` | Retorna configuração do cérebro (probabilidades, frases, comandos) |
 
 ---
 
@@ -71,10 +105,47 @@ Aggie-One/
 - **Backend**: Python + Django + Django Ninja
 - **Banco de Dados**: SQLite
 - **IA**: Gemini API (em integração)
+- **Animações**: Canvas 2D com LERP (Interpolação Linear)
+- **Áudio**: HTML5 Audio API
 
 ---
 
-## 🚀 Como Rodar
+## 🎮 Funcionalidades Principais
+
+### 🎵 Sistema de Música e Dança
+- **Música automática**: Quando ativada, a Aggie começa a dançar automaticamente
+- **3 tipos de dança**: DANCE (balanço), DANCE_SPIN (giros), DANCE_WIGGLE (wiggles frenéticos)
+- **Troca dinâmica**: Alterna entre danças a cada 3 segundos
+- **Integração**: Sistema totalmente integrado com AudioManager e AnimationEngine
+
+### � Sistema de Roupas
+- **5 roupas disponíveis**: Chapéu de festa, Gravata borboleta, Colar, Óculos de sol, Cachecol
+- **Ativação por chat**: Frases específicas no chat ativam cada roupa
+- **Renderização procedural**: Todas as roupas desenhadas via Canvas 2D
+- **Respostas temáticas**: Cada roupa tem uma frase específica da Aggie
+
+### 🧠 Cérebro Dinâmico
+- **Configuração via Admin**: Todas as probabilidades e frases controladas via Django Admin
+- **Palavras-chave**: Sistema de comandos configurável via banco de dados
+- **Frases contextuais**: Respostas baseadas no estado atual (fome, energia, tédio)
+- **Atualização em tempo real**: Mudanças no banco refletem imediatamente no frontend
+
+### 🎯 Sistema de Eventos
+- **Eventos frontend**: Interceptação de palavras-chave antes da IA
+- **Animações complexas**: Sequências encadeadas de animações
+- **Efeitos visuais**: Balões, matrix rain, corações flutuantes
+- **Acessórios temporários**: Chapéus e óculos com duração configurável
+
+### 📊 Sistema Tamagotchi
+- **5 stats principais**: Fome, Energia, Carinho, Tédio, Raiva
+- **Dreno passivo**: Stats diminuem/aumentam com o tempo
+- **Interações**: Alimentar, brincar, fazer carinho
+- **Ciclo de sono**: Energia zerada entra em modo sono
+- **Comportamento reativo**: Stats afetam comportamento e aparência
+
+---
+
+## �🚀 Como Rodar
 
 ### Pré-requisitos
 - Python 3.11+
@@ -99,20 +170,54 @@ npm install
 npm run dev
 ```
 
+### Seed de Dados
+```bash
+cd backend
+python seed_brain.py              # Configurações básicas do cérebro
+python seed_clothing_commands.py  # Comandos de roupas
+```
+
 ---
 
 ## 🗺️ Roadmap
 
+### ✅ Concluído
 - [x] Estrutura base (API REST + Frontend separados)
 - [x] Modelos dinâmicos (PersonaTrait, ScriptedPhrase)
 - [x] Interface base e layout Mobile-First (CSS puro)
 - [x] Gatinha procedural em Canvas 2D com 4 direções
 - [x] Sistema de fala (balão com typewriter)
+- [x] Sistema Tamagotchi (stats, dreno, interações)
+- [x] Motor de animações modular (AnimationEngine)
+- [x] Sistema de eventos frontend (EventEngine)
+- [x] Sistema de roupas via chat
+- [x] Sistema de música e dança automática
+- [x] Cérebro dinâmico configurável via Admin
+- [x] Movimentos biológicos (respiração, piscar, orelhas)
+- [x] Física procedural da cauda
+
+### 🚧 Em Progresso
 - [ ] Integração real com Gemini API
-- [ ] Mecânicas de cuidado (alimentar, brincar)
+- [ ] Sistema de persistência de estado
+- [ ] Tela de login/bloqueio melhorada
+
+### 📋 Planejado
 - [ ] Roteiros e interações com contexto
 - [ ] Transformar em biblioteca/widget embeddable
-- [ ] Deploy
+- [ ] Deploy em produção
+- [ ] Sistema de conquistas/achievements
+- [ ] Multiplayer (múltiplos pets na mesma tela)
+- [ ] Integração com calendário real (aniversários, feriados)
+
+---
+
+## 📚 Documentação
+
+- **[AGGIE_CONTEXT.md](AGGIE_CONTEXT.md)** - Contexto completo do projeto e regras imutáveis
+- **[AGGIE_MANUAL.md](AGGIE_MANUAL.md)** - Manual do usuário com comandos e funcionalidades
+- **[PET_SPRITE_ARCHITECTURE.md](PET_SPRITE_ARCHITECTURE.md)** - Arquitetura detalhada do sistema de sprite
+- **[EVENTS_ARCHITECTURE.md](EVENTS_ARCHITECTURE.md)** - Arquitetura do sistema de eventos
+- **[AGENTS.md](AGENTS.md)** - Regras de design e personagem (para IAs)
 
 ---
 

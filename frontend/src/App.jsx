@@ -1,296 +1,183 @@
-import React, { useState, useEffect } from 'react'
-import PixelRoom from './components/PixelRoom/PixelRoom'
-import PetSprite from './components/PetSprite/PetSprite'
-import ChatBubble from './components/ChatBubble/ChatBubble'
-import MobileUIOverlay from './components/MobileUIOverlay/MobileUIOverlay'
-import DevMenu from './components/DevMenu/DevMenu'
-import { handleKeywordEvents } from './events/EventEngine'
-import './App.css'
+import React, { useEffect } from 'react';
+import PixelRoom from './components/PixelRoom/PixelRoom';
+import PetSprite from './components/PetSprite/PetSprite';
+import ChatBubble from './components/ChatBubble/ChatBubble';
+import PixelIcon from './components/PixelIcon';
+import MobileUIOverlay from './components/MobileUIOverlay/MobileUIOverlay';
+import DevMenu from './components/DevMenu/DevMenu';
+import StatusHUD from './components/StatusHUD/StatusHUD';
+import PlayerActions from './components/PlayerActions/PlayerActions';
+import WelcomeScreen from './components/WelcomeScreen/WelcomeScreen';
+import CinematicOverlay from './components/CinematicOverlay/CinematicOverlay';
+import AggieManual from './components/AggieManual/AggieManual';
+
+// Custom Hooks Refatorados
+import { useDragAndDrop } from './hooks/useDragAndDrop';
+import { useInteractions } from './hooks/useInteractions';
+import { useChatAndEvents } from './hooks/useChatAndEvents';
+import './App.css';
+
+// Hooks
+import { usePetState } from './hooks/usePetState';
+import { useSequenceEngine } from './hooks/useSequenceEngine';
+import { useGameLoop } from './hooks/useGameLoop';
+import { useWanderAI } from './hooks/useWanderAI';
+import { useDanceManager } from './hooks/useDanceManager';
+
+// Services
+import { getPetState, getPetTalk } from './services/petService';
+import { getCachedBrainConfig } from './services/brainService';
 
 function App() {
-  const [petState, setPetState] = useState({ mood: 'feliz', energy: 100 })
-  const [chat, setChat] = useState({ text: '', isVisible: false })
-  const [effects, setEffects] = useState({ balloons: false, cake: false })
-  const [action, setAction] = useState('IDLE') // IDLE, WALK, RUN, SIT, GROOM, TIRED
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [direction, setDirection] = useState('DOWN')
+  const [isUnlocked, setIsUnlocked] = React.useState(() => {
+    return localStorage.getItem('aggie_unlocked') === 'true';
+  });
+  const [isIntroSeen, setIsIntroSeen] = React.useState(() => {
+    return localStorage.getItem('aggie_intro_seen') === 'true';
+  });
+  const [isManualOpen, setIsManualOpen] = React.useState(false);
 
-  const API_URL = 'http://localhost:8000/api/pet'
+  const petContext = usePetState();
+  const { triggerSequence } = useSequenceEngine(petContext);
+  
+  const aiLocked = !isIntroSeen;
+  useGameLoop(petContext, triggerSequence, aiLocked);
+  useWanderAI(petContext, triggerSequence, aiLocked);
 
-  // Busca o estado inicial
+  const {
+    petState, setPetState,
+    chat,
+    effects, setEffects,
+    action, setAction,
+    position, setPosition,
+    direction, setDirection,
+    stats, setStats,
+    accessory, equipAccessory,
+    showChat, hideChat,
+    chatVisibleRef, petMoodRef, statsRef,
+    isDragging, setIsDragging
+  } = petContext;
+
+  // --- Custom Hooks de Lógica ---
+  const { handleCatnip, handleFeed, handlePetInteraction } = useInteractions(petContext, triggerSequence);
+  const { handleSendMessage } = useChatAndEvents(petContext, triggerSequence);
+  const { handlePetPointerDown } = useDragAndDrop(petContext);
+  
+  const isDancingRef = React.useRef(false);
+  const { startDancing, stopDancing } = useDanceManager(setAction, isDancingRef);
+
+  // Initial Fetch
   useEffect(() => {
-    fetch(`${API_URL}/state`)
-      .then(res => res.json())
-      .then(data => setPetState(data))
-      .catch(err => console.error("API offline, usando estado padrão", err))
-  }, [])
-
-  // Faz o pet "falar sozinho" a cada X segundos
-  useEffect(() => {
-    const talkInterval = setInterval(() => {
-      if (Math.random() > 0.9 && !chat.isVisible) {
-        fetch(`${API_URL}/talk`)
-          .then(res => res.json())
-          .then(data => showChat(data.reply))
-          .catch(err => console.log("Sem resposta do backend", err))
-      }
-    }, 5000);
-    return () => clearInterval(talkInterval)
-  }, [chat.isVisible])
-
-  // Lógica de ações aleatórias (Andar, Correr, Sentar, Lamber, Cansar)
-  useEffect(() => {
-    const wanderInterval = setInterval(() => {
-      if (chat.isVisible || action === 'RUN' || action === 'ZOOMIES' || action === 'CROUCH' || action === 'LUNGE') return;
-
-      // Se ela estiver ocupada com uma ação longa, tem chance de parar
-      if (action === 'TIRED' && Math.random() > 0.5) { setAction('IDLE'); return; }
-      if (action === 'GROOM' && Math.random() > 0.6) { setAction('IDLE'); return; }
-      if (action === 'SIT' && Math.random() > 0.4) { setAction('IDLE'); return; }
-
-      // 40% de chance de iniciar uma nova ação se estiver IDLE ou WALK
-      if (Math.random() > 0.6) {
-        const rand = Math.random();
-        
-        if (rand < 0.1) {
-          triggerSequence('WAKE_UP');
-        } else if (rand < 0.2) {
-          triggerSequence('HUNTING');
-        } else if (rand < 0.3) {
-          triggerSequence('AMBUSH');
-        } else if (rand < 0.4) {
-          triggerSequence('BUG_CATCH');
-        } else if (rand < 0.45) {
-          setAction('TAIL_CHASE');
-          setTimeout(() => setAction('TIRED'), 3000);
-        } else if (rand < 0.5) {
-          setAction('ZOOMIES');
-        } else if (rand < 0.55) {
-          setAction('JUMP');
-          setTimeout(() => setAction('IDLE'), 1000);
-        } else if (rand < 0.65) {
-          setAction('GROOM');
-        } else if (rand < 0.72) {
-          setAction('SIT_LOAF');
-        } else if (rand < 0.78) {
-          setAction('SIT');
-        } else {
-          // Vai se mover (WALK ou RUN)
-          const isRun = rand > 0.8;
-          setAction(isRun ? 'RUN' : 'WALK');
-          
-          // Limites do tapete
-          const limitX = 25;
-          const limitY = 20;
-          const randomX = Math.floor(Math.random() * limitX * 2) - limitX;
-          const randomY = Math.floor(Math.random() * limitY * 2) - limitY;
-
-          const dx = randomX - position.x;
-          const dy = randomY - position.y;
-          
-          let newDir = 'DOWN';
-          if (Math.abs(dx) > Math.abs(dy)) {
-            newDir = dx > 0 ? 'RIGHT' : 'LEFT';
-          } else {
-            newDir = dy > 0 ? 'DOWN' : 'UP';
-          }
-
-          setDirection(newDir);
-          setPosition({ x: randomX, y: randomY });
-
-          const moveTime = isRun ? 800 : 2000;
-          setTimeout(() => {
-            setAction(isRun ? 'TIRED' : 'IDLE');
-          }, moveTime);
+    getPetState()
+      .then(data => {
+        setPetState(data);
+        if (data.energy !== undefined) {
+           setStats(prev => ({
+             ...prev,
+             energy: data.energy ?? prev.energy,
+             hunger: data.hunger ?? prev.hunger,
+             affection: data.affection ?? prev.affection,
+             boredom: data.boredom ?? prev.boredom,
+             anger: data.anger ?? prev.anger
+           }));
         }
-      }
-    }, 2500);
-    return () => clearInterval(wanderInterval);
-  }, [action, chat.isVisible, position])
-
-  // Efeito especial: Zoomies (Corrida errática em zigue-zague)
-  useEffect(() => {
-    let zoomInterval;
-    let stopTimeout;
-
-    if (action === 'ZOOMIES') {
-      const limitX = 25;
-      const limitY = 20;
-      
-      zoomInterval = setInterval(() => {
-        const randomX = Math.floor(Math.random() * limitX * 2) - limitX;
-        const randomY = Math.floor(Math.random() * limitY * 2) - limitY;
-
-        setPosition(prev => {
-          const dx = randomX - prev.x;
-          const dy = randomY - prev.y;
-          if (Math.abs(dx) > Math.abs(dy)) {
-            setDirection(dx > 0 ? 'RIGHT' : 'LEFT');
-          } else {
-            setDirection(dy > 0 ? 'DOWN' : 'UP');
-          }
-          return { x: randomX, y: randomY };
-        });
-      }, 250); // Muda de direção a cada 250ms! Muito rápido!
-
-      stopTimeout = setTimeout(() => {
-        clearInterval(zoomInterval);
-        setAction('TIRED'); // Fica cansada após o surto de energia
-      }, 3000); // Zoomies duram 3 segundos
-    }
-
-    return () => {
-      clearInterval(zoomInterval);
-      clearTimeout(stopTimeout);
-    };
-  }, [action])
-
-  // Efeito especial quando começa a perseguir o rabo
-  useEffect(() => {
-    if (action === 'TAIL_CHASE') {
-      showChat("Tem alguma coisa na minha cauda!!", true)
-    }
-  }, [action])
-
-  const showChat = (text, keepAction = false) => {
-    setChat({ text, isVisible: true })
-    if (!keepAction) {
-      setAction('WALK') // Só pra mexer um pouquinho
-      setTimeout(() => setAction('IDLE'), 2000)
-    }
-  }
-
-  const hideChat = () => {
-    setChat(prev => ({ ...prev, isVisible: false }))
-  }
-
-  const triggerSequence = (seqName) => {
-    if (seqName === 'WAKE_UP') {
-      setAction('SLEEPING');
-      setDirection('RIGHT'); // Gato dormindo de lado fica melhor (modo pãozinho)
-      setTimeout(() => setAction('WAKE_UP'), 2500);
-      setTimeout(() => setAction('STRETCH'), 4500);
-      setTimeout(() => {
-        setAction('IDLE');
-        setDirection('DOWN'); // Acorda e olha pro usuário
-      }, 7000);
-    }
-    if (seqName === 'HUNTING') {
-      setAction('CROUCH_WIGGLE');
-      setDirection('RIGHT');
-      setTimeout(() => {
-        setAction('POUNCE');
-        setPosition(prev => ({ x: prev.x + (direction === 'RIGHT' ? 10 : -10), y: prev.y }));
-      }, 2000);
-      setTimeout(() => setAction('ROLL'), 2500);
-      setTimeout(() => setAction('IDLE'), 3500);
-    }
-    if (seqName === 'AMBUSH') {
-      const isRightEdge = Math.random() > 0.5;
-      const edgeX = isRightEdge ? 28 : -28;
-      const edgeY = Math.floor(Math.random() * 40) - 20;
-      
-      setAction('RUN');
-      setDirection(isRightEdge ? 'RIGHT' : 'LEFT');
-      setPosition({ x: edgeX, y: edgeY });
-
-      setTimeout(() => {
-        setDirection(isRightEdge ? 'LEFT' : 'RIGHT');
-        setAction('CROUCH');
-
-        setTimeout(() => {
-          setAction('LUNGE');
-          setPosition({ x: 0, y: 0 });
-
-          setTimeout(() => {
-            setAction('TIRED');
-          }, 400); 
-        }, 3000); 
-      }, 800); 
-    }
-    if (seqName === 'BUG_CATCH') {
-      const limitX = 25;
-      const limitY = 20;
-      const randomX = Math.floor(Math.random() * limitX * 2) - limitX;
-      const randomY = Math.floor(Math.random() * limitY * 2) - limitY;
-
-      const dx = randomX - position.x;
-      const dy = randomY - position.y;
-      
-      let newDir = 'DOWN';
-      if (Math.abs(dx) > Math.abs(dy)) {
-        newDir = dx > 0 ? 'RIGHT' : 'LEFT';
-      } else {
-        newDir = dy > 0 ? 'DOWN' : 'UP';
-      }
-
-      setAction('RUN');
-      setDirection(newDir);
-      setPosition({ x: randomX, y: randomY });
-
-      setTimeout(() => {
-        setAction('BUG_CATCH');
-        if (newDir === 'UP' || newDir === 'DOWN') setDirection('RIGHT');
-        setTimeout(() => setAction('IDLE'), 3000); 
-      }, 800); 
-    }
-    if (seqName === 'STARTLE') {
-      setAction('STARTLE_JUMP');
-      setTimeout(() => setAction('CROUCH'), 800); 
-    }
-    if (seqName === 'BIRTHDAY_EAT') {
-      setAction('WALK'); // Simula ela andando pro bolo
-      setTimeout(() => {
-        setAction('EAT_TREAT');
-      }, 1000); 
-    }
-  };
-
-  const handleSendMessage = (message) => {
-    hideChat()
-    
-    // Despacha a mensagem para a EventEngine interceptar palavras-chave
-    const isIntercepted = handleKeywordEvents(message, {
-      showChat,
-      setEffects,
-      triggerSequence,
-      setDirection,
-      setAction
-    });
-
-    if (isIntercepted) return; // Se a Engine retornar true, não precisamos do backend (ex: Festa)
-
-    fetch(`${API_URL}/interact`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
-    })
-      .then(res => res.json())
-      .then(data => showChat(data.reply, message.includes('!')))
-      .catch(err => {
-        console.error(err)
-        showChat("Ih... perdi a conexão. Minha memória tá péssima.")
+        if (data.active_accessory) {
+           equipAccessory(data.active_accessory);
+        }
       })
-  }
+      .catch(err => console.error("API offline, usando estado padrão", err));
+  }, [setPetState, setStats, equipAccessory]);
 
-  // Define a transição CSS baseada na ação
+  const [isLightOn, setIsLightOn] = React.useState(() => {
+    const hour = new Date().getHours();
+    return hour >= 6 && hour < 18; // Luz acesa entre 6h e 18h
+  });
+
   const getTransitionStyle = () => {
+    const config = getCachedBrainConfig();
+    const getSetting = (key, fallback) => {
+      if (!config || !config.settings) return fallback;
+      const s = config.settings.find(x => x.key === key);
+      return s ? s.value : fallback;
+    };
+
     if (action === 'ZOOMIES') return 'transform 0.25s cubic-bezier(0.17, 0.67, 0.23, 1.25)'; // Bouncy zig-zag
     if (action === 'LUNGE') return 'transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1)'; // Bote muito rápido
     if (action === 'POUNCE') return 'transform 0.5s linear'; // O pulo parabólico é feito pelo LERP, o translado é linear
-    if (action === 'RUN') return 'transform 0.8s linear';
-    return 'transform 2s linear';
+    
+    if (action === 'RUN') {
+      const runTime = getSetting('RUN_MOVE_TIME_MS', 1500) / 1000;
+      return `transform ${runTime}s linear`;
+    }
+    
+    if (action === 'WALK') {
+      const walkTime = getSetting('WALK_MOVE_TIME_MS', 3500) / 1000;
+      return `transform ${walkTime}s linear`;
+    }
+    
+    // Quando ela parar (IDLE, SIT, SLEEPING, etc), zera a transição 
+    // para evitar que ela "deslize" com o tempo residual de outras animações.
+    if (petContext.isDragging) return 'filter 0.2s ease'; // Mantém transição da sombra, mas zera o transform para arrasto instantâneo
+    if (petContext.isDragging) return 'filter 0.2s ease'; // Mantém transição da sombra, mas zera o transform para arrasto instantâneo
+    return 'transform 0s linear';
   };
 
   return (
-    <div className="app-container">
-      <DevMenu 
+    <>
+      {!isUnlocked && <WelcomeScreen onUnlock={() => {
+        localStorage.setItem('aggie_unlocked', 'true');
+        setIsUnlocked(true);
+      }} />}
+      
+      {isUnlocked && !isIntroSeen && (
+        <CinematicOverlay 
+          petContext={petContext}
+          onComplete={() => {
+            localStorage.setItem('aggie_intro_seen', 'true');
+            setIsIntroSeen(true);
+          }}
+        />
+      )}
+      
+      {isUnlocked && (
+        <div className="app-container">
+          {isManualOpen && <AggieManual onClose={() => setIsManualOpen(false)} />}
+          <DevMenu 
         setAction={setAction}
         setDirection={setDirection}
         setPetState={setPetState}
         triggerSequence={triggerSequence}
+        equipAccessory={equipAccessory}
+        getPetTalk={getPetTalk}
+        showChat={showChat}
       />
-      <PixelRoom>
+      <StatusHUD stats={stats} />
+      <PlayerActions 
+        onFeed={handleFeed}
+        onCatnip={handleCatnip}
+        onMusicStart={startDancing}
+        onMusicStop={stopDancing}
+        onOpenManual={() => setIsManualOpen(true)}
+      />
+      <PixelRoom isLightOn={isLightOn}>
+        {effects.matrixRain && (
+          <div className="matrix-overlay">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div 
+                key={i} 
+                className="matrix-code"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDuration: `${1.5 + Math.random()}s`,
+                  animationDelay: `${Math.random() * 2}s`
+                }}
+              >
+                10101100101101
+              </div>
+            ))}
+          </div>
+        )}
+        
         {effects.balloons && (
           <div className="balloons-container">
             <div className="balloon b1">🎈</div>
@@ -306,7 +193,7 @@ function App() {
           </div>
         )}
         <div
-          className="pet-wrapper"
+          className={`pet-wrapper ${petContext.isDragging ? 'dragging' : ''}`}
           style={{
             transform: `translate(${position.x}vw, ${position.y}vh)`,
             transition: getTransitionStyle()
@@ -315,8 +202,23 @@ function App() {
           <ChatBubble
             text={chat.text}
             isVisible={chat.isVisible}
+            isLoading={chat.isLoading}
             onHide={hideChat}
           />
+          
+          {!chat.isVisible && (
+            <div className="emotion-bubble-container">
+              {petState.mood === 'dormindo' ? (
+                <div className="emotion-bubble sleep"><PixelIcon name="sleep" color="#60a5fa" size={24}/></div>
+              ) : stats.anger > 80 || petState.mood === 'brava' ? (
+                <div className="emotion-bubble anger"><PixelIcon name="anger" color="#ef4444" size={24}/></div>
+              ) : stats.boredom > 80 ? (
+                <div className="emotion-bubble boredom"><PixelIcon name="boredom" color="#a78bfa" size={24}/></div>
+              ) : stats.hunger < 30 ? (
+                <div className="emotion-bubble hunger"><PixelIcon name="hunger" color="#f97316" size={24}/></div>
+              ) : null}
+            </div>
+          )}
 
           {effects.cake && (
             <div className="cake-container">
@@ -324,19 +226,35 @@ function App() {
             </div>
           )}
 
-          <div className="interaction-hitbox" onClick={() => triggerSequence('WAKE_UP')}></div>
+          <div className="interaction-hitbox" 
+            onPointerDown={handlePetPointerDown}
+            onPointerDown={handlePetPointerDown}
+            onClick={handlePetInteraction}
+            onMouseEnter={handlePetInteraction}
+          ></div>
+          
+          {effects.floatingHearts && (
+            <div className="floating-hearts">
+              <div className="heart-particle">❤️</div>
+              <div className="heart-particle" style={{ animationDelay: '0.2s', left: '20px' }}>❤️</div>
+              <div className="heart-particle" style={{ animationDelay: '0.4s', left: '-20px' }}>❤️</div>
+            </div>
+          )}
+          
           <PetSprite
             mood={petState.mood}
             action={action}
-            direction={chat.isVisible ? 'DOWN' : direction}
+            direction={(chat.isVisible && chat.isInteractive) ? 'DOWN' : direction}
+            accessory={accessory}
           />
         </div>
       </PixelRoom>
 
-      <MobileUIOverlay onSendMessage={handleSendMessage} />
-    </div>
-  )
+          <MobileUIOverlay onSendMessage={handleSendMessage} />
+        </div>
+      )}
+    </>
+  );
 }
 
-
-export default App
+export default App;

@@ -1,0 +1,103 @@
+.welcome-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0a0a0a;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease-out;
+}
+
+.welcome-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.login-box {
+  text-align: center;
+  padding: 2rem;
+  background: #111;
+  border: 4px solid #333;
+  box-shadow: 4px 4px 0px #f97316;
+  max-width: 90%;
+  width: 400px;
+}
+
+.welcome-title {
+  font-family: 'Courier New', Courier, monospace;
+  color: #f97316;
+  text-shadow: 2px 2px 0px #1a1a1a;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.welcome-subtitle {
+  font-family: 'Courier New', Courier, monospace;
+  color: #ddd;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.welcome-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.password-input {
+  background: #0a0a0a;
+  border: 4px solid #333;
+  color: #f97316;
+  padding: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  text-align: center;
+  outline: none;
+  letter-spacing: 4px;
+}
+
+.password-input:focus {
+  border-color: #f97316;
+}
+
+.password-input.error {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.enter-button {
+  background: #f97316;
+  color: #0a0a0a;
+  border: 4px solid #ea580c;
+  box-shadow: 4px 4px 0px #1a1a1a;
+  padding: 12px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.1s;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.enter-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #1a1a1a;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+  animation: shake 0.4s;
+}

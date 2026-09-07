@@ -1,32 +1,45 @@
 export const triggerBirthday = ({ showChat, setEffects, triggerSequence, setDirection }) => {
-  // 1. Reação imediata
   setDirection('DOWN');
-  showChat("Miau! Onde estão meus balões e meu bolo?!", true);
   
-  // 2. Dispara Balões no React DOM
+  // 1. Dispara Balões e dá um pulinho
   setEffects(prev => ({ ...prev, balloons: true }));
-  
-  // Remove os balões do DOM depois de 7s para não pesar memória e permitir rodar de novo
+  triggerSequence('JUMP');
   setTimeout(() => {
     setEffects(prev => ({ ...prev, balloons: false }));
-  }, 7000);
+  }, 25000); // 25s - Os balões vão ficar caindo durante quase toda a cena!
 
-  // 3. Zoomies de pura alegria (corre freneticamente)
-  triggerSequence('ZOOMIES');
+  // 2. Sequência de Falas (Diálogo Customizado)
+  showChat("Feliz aniversário, Agatha!!! 21 aninhos, hein? 🎉", true, false, true);
   
-  // 4. Depois que o Zoomies acalma, o bolo dropa
+  setTimeout(() => {
+    showChat("O seu criador passou dias codando a Aggie (eu mesma) só pra ser o seu presente!", true, false, true);
+    triggerSequence('GROOM_SHORT'); // Dá uma lambida de orgulho
+  }, 4500);
+
+  setTimeout(() => {
+    showChat("Sou a melhor gata cibernética que você poderia ter ganhado. Miau!", true, false, true);
+    triggerSequence('ROLL_SHORT'); // Rola no chão fofa
+  }, 9500);
+
+  // 3. Zoomies de pura alegria
+  setTimeout(() => {
+    triggerSequence('ZOOMIES');
+  }, 13000);
+  
+  // 4. Depois do Zoomies, Dropa o bolo!
   setTimeout(() => {
     setEffects(prev => ({ ...prev, cake: true }));
-    showChat("BOLO!!! 🐟", true);
+    showChat("Mas enfim... CADE O MEU BOLO?! 🐟", true, false, true);
     triggerSequence('BIRTHDAY_EAT');
-
-    // 5. Some o bolo depois dela comer e ela volta ao normal
+    
+    // 5. Some o bolo depois de comer
     setTimeout(() => {
       setEffects(prev => ({ ...prev, cake: false }));
-      showChat("Prrr... Estava delicioso!", false); // false fará o cat voltar ao WALK e depois IDLE
+      showChat("Prrr... Agora vai lá comemorar seus 21! Te amo! ❤️", false, false, true); 
+      triggerSequence('JUMP'); // Pulinho final de despedida
     }, 4500);
 
-  }, 4500);
+  }, 17500);
 
   return true;
 };
