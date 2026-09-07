@@ -10,42 +10,42 @@ def seed_clothing_commands():
     commands = [
         {
             "name": "Comando Chapéu de Festa",
-            "keywords": "chapéu,party hat,festa,quero chapéu",
+            "keywords": "coloca o chapeu de festa,quero ver o chapeu,bota o chapeu de festa",
             "event_type": "CLOTHING_PARTY_HAT",
             "reply_text": "Olha meu chapéu de festa! 🎉",
             "is_active": True
         },
         {
             "name": "Comando Gravata",
-            "keywords": "gravata,bowtie,elegante",
+            "keywords": "coloca uma gravata elegante,quero ver a gravata,bota a gravata preta",
             "event_type": "CLOTHING_BOWTIE",
             "reply_text": "Estou elegante hoje, né? 😎",
             "is_active": True
         },
         {
             "name": "Comando Colar",
-            "keywords": "colar,necklace,pingente",
+            "keywords": "coloca o seu colar,quero ver seu colar,bota o colar dourado",
             "event_type": "CLOTHING_COLLAR",
             "reply_text": "Gostei do colar!",
             "is_active": True
         },
         {
             "name": "Comando Óculos",
-            "keywords": "óculos,sunglasses,óculos de sol,sol",
+            "keywords": "coloca o oculos de sol,quero ver seu oculos,bota o oculos escuro",
             "event_type": "CLOTHING_SUNGLASSES",
             "reply_text": "Agora estou Incógnito... 😎",
             "is_active": True
         },
         {
             "name": "Comando Cachecol",
-            "keywords": "cachecol,scarf,frio",
+            "keywords": "coloca o seu cachecol,quero ver o cachecol,bota o cachecol nela",
             "event_type": "CLOTHING_SCARF",
             "reply_text": "Está um pouco frio, mas está bom!",
             "is_active": True
         },
         {
             "name": "Comando Sem Roupa",
-            "keywords": "sem roupa,nu,sem acessório,remove,tirar",
+            "keywords": "fica sem roupa nenhuma,tira esse acessorio dai,tira essa roupa logo",
             "event_type": "CLOTHING_NONE",
             "reply_text": "Pronto, sem roupa agora.",
             "is_active": True

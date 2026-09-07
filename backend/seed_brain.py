@@ -41,7 +41,7 @@ for category, text, weight in phrases:
 settings = [
     ("GROOM_STOP_CHANCE", 0.6, "Chance da gata parar de se lamber (0.0 a 1.0)"),
     ("SIT_STOP_CHANCE", 0.4, "Chance da gata levantar quando está sentada (0.0 a 1.0)"),
-    ("STATE_CHANGE_CHANCE", 0.6, "Chance de trocar de estado quando está IDLE/WALK (0.0 a 1.0)"),
+    ("STATE_CHANGE_CHANCE", 0.2, "Chance limitadora de trocar de estado (0.0 a 1.0). Menor = Mais ações!"),
 ]
 
 for key, val, desc in settings:
@@ -51,13 +51,13 @@ for key, val, desc in settings:
     )
 
 commands = [
-    ("Evento Matrix", "hack,matrix,frio", "MATRIX", "Entrando na matrix..."),
-    ("Evento Detetive", "procurar,investigar,procura,detetive", "DETECTIVE", "Alguém falou em detetive? *coloca o chapéu*"),
-    ("Evento Festa", "aniversario,aniversário,festa", "BIRTHDAY", "Eba, festa!"),
-    ("Evento Susto", "!", "STARTLE", "Miau!! Que susto!"),
-    ("Evento Comida", "sachê,petisco,comida,toma,come,ração,sache", "FEED", "Nhami nhami!"),
-    ("Lore Criador", "quem te criou,quem fez você,fez você", "LORE_CREATOR", "Fui codificada com muito amor..."),
-    ("Lore Agatha", "agatha,sua dona,dona", "LORE_AGATHA", "A Agatha é a melhor dona do mundo!"),
+    ("Evento Matrix", "quero entrar na matrix,mostra a matrix pra mim,faz o hack da matrix", "MATRIX", "Entrando na matrix..."),
+    ("Evento Detetive", "bancar o detetive agora,procurar uma pista aí,quero ver você de detetive", "DETECTIVE", "Alguém falou em detetive? *coloca o chapéu*"),
+    ("Evento Festa", "feliz aniversario aggie,vamos fazer uma festa,hoje e dia de festa", "BIRTHDAY", "Eba, festa!"),
+    ("Evento Susto", "buuu tomar um susto,dar um susto nela", "STARTLE", "Miau!! Que susto!"),
+    ("Evento Comida", "vem comer um sache,toma um petisco gostoso,quero te dar comida", "FEED", "Nhami nhami!"),
+    ("Lore Criador", "quem foi que te criou,quem e seu criador,fala quem te fez", "LORE_CREATOR", "Fui codificada com muito amor..."),
+    ("Lore Agatha", "fala da sua dona,quem e a agatha,conta sobre a agatha", "LORE_AGATHA", "A Agatha é a melhor dona do mundo!"),
 ]
 
 for name, keywords, evt_type, reply in commands:
